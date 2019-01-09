@@ -45,9 +45,38 @@ My background as a mobile developer has me instinctively trying to build mobile 
 The predefined scripts do way more than just train the model.They have code to automatically download computational graphs of the pretrained weights.
 Write tensorboard summary logs for evaluating and debugging the model, outputs the trained model as a frozen computational graph.
 Lastly they also preprocess my trainning data,  vectorising the images and storing the vector values in a text file in a similar directory structure as the training data.This is saves a lot of time when retraining the model with tweaked hyperparameters.
+
+
 [logo]:/home/iamukasa/PythonProjects/KSL/img/bottleneckmobilenets.png
 
 Scripts are by the tensorflow team which then inspired their "Tensorflow for poets codelab".
 
 
 ### STEP THREE: TRAINING THE MODEL
+Perks of the well written predefined scripts from the tensoflow team, we just run the scripts with the appropriate hyperparameters.
+Sample run with hyperparameters
+
+#####Mobilenets
+```bash
+python retrain.py \
+  --bottleneck_dir= [path to bottleneck directory] \
+  --how_many_training_steps= [number of trainnig steps you want] \
+  --output_graph= [path and name of file you want to save .pb file]\
+  --output_labels= [path and name of file to save list of labels] \
+  --image_dir= [path to training data]
+
+```
+##### INCEPTION
+``` bash
+python retrain.py --model_dir ./inception --image_dir=data
+```
+
+To explain the different hyperparameters, the inception script has more default values defined in the scripts vs the mobilenets one.
+
+Once everything is set , and the bottleneck code has run as illustrated above, you should expect an output like this on your terminal.
+
+[logo]:/home/iamukasa/PythonProjects/KSL/img/bottleneckmobilenets.png
+
+### 
+
+
