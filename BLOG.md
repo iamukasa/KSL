@@ -77,6 +77,27 @@ Once everything is set , and the bottleneck code has run as illustrated above, y
 
 [logo]:/home/iamukasa/PythonProjects/KSL/img/bottleneckmobilenets.png
 
-### 
+### EVALUATING AND DEBUGGING THE MODEL
+The predefined scripts are so well written you can simply visualise accuracy and loss over training iterations with one simple command
+``` bash
+tensorboard --logdir /tmp/retrain_logs
+
+```
+If you passed a different path to write summary logs change that in the arguments of the command
+When you click the link that generates you should see an output like this :
+
+[logo]:/home/iamukasa/PythonProjects/KSL/img/tensorboardinception1500.png
 
 
+Nothing is as satisfying to an AI developer as those two plotted graphs, accuracy headed towards 1 and loss (entropy) headed towards 0 each training iterations. Its the first indicator you are doing things right.
+There are two different coloured plots,orange one is a plot on evaluation of  loss and accuracy with data we trained the model with and the blue one a plot that evaluates the model with data that was not used to train the model.
+
+
+To build even better intuition you can visualise the computational graph of the neural network you just trained, to see what beauty is happening under the hood.
+
+###### inception
+[logo]:/home/iamukasa/PythonProjects/KSL/img/inception.png
+
+
+###### Mobilenets
+[logo]:/home/iamukasa/PythonProjects/KSL/img/mobilenets.png
