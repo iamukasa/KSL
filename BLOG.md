@@ -2,18 +2,18 @@
 
 
 July 2016 I met Hudson, a brilliant deaf developer who had just built an app to teach his deaf community sexual health. We became fast friends.Since then my circle of deaf friends and acquaintances only grew.
-I even got a sign name.In the deaf community its easier to assign someone a sign from a unique characteristic rather than finger spelling their name every time. But there was a problem, for a long time I couldn't communicate well enough with this growing circle of deaf friends ans acquaitances,I had not learned sign language.
+I even got a sign name.In the deaf community its easier to assign someone a sign from a unique characteristic rather than finger spelling their name every time. But there was a problem, for a long time I could not communicate well enough with this growing circle of deaf friends ans acquaintances,I had not learned sign language.
 
 Conversations with Hudson and his also deaf co founder,Alfred were first interceded by the sign language interpreters they had assign
-ed for meetings. Hudson's  app and sophie bot were funded under the same the program so we had a lot of those.Our conversations grew to typing texts on each of our phones notes or messaging app.I was guilty of distracting him from paying attention to his intepreter in a couple of confrences and events. Soon we developed a crude list of gestures we both understood.These are known in the deaf community as "Village sign language".
+ed for meetings. Hudson's  app and sophie bot were funded under the same the program so we had a lot of those.Our conversations grew to typing texts on each of our phones notes or messaging app.I was guilty of distracting him from paying attention to his interpreter in a couple of conferences and events. Soon we developed a crude list of gestures we both understood.These are known in the deaf community as "Village sign language".
  
 Interactions with the deaf community only grew  after that. May last year at Microsoft's Build conference, on a special keynote session queue on the side , a crew of deaf devs joined us and I ached to introduce myself and show off my sign name.Lucky they had an interpreter, and he helped. June last year after an event in coastal Kenya, Hudson had me tag along and gate crash  his friends beauty pageant. She was the reigning queen of the pageant and was deaf too. We all went out for drinks later but I couldnt fully participate in the conversation.All I knew was how to finger spell "GIF", my sign name and how to say "hi".
-October last year at a conference I  help organise, Droidcon Kenya, we had two deaf developers in attendance and they brought in two sign language intepreters .It was clear the universe wanted me to learn sign language.
+October last year at a conference I  help organise, Droidcon Kenya, we had two deaf developers in attendance and they brought in two sign language interpreters .It was clear the universe wanted me to learn sign language.
 
 Proud to say I am now fluent at finger spelling the Kenyan Sign Language alphabet, and I intentionally pick up a word a day. 
-I know this learning curve isn't a solve everyone who wants to communicate better with deaf friends, family , workmates and acquaintances.We could use the advances ai technology has given us to build a tool to make this easier. Late last year Hudson , the brilliant dev he is, published an app to teach hearing guys sign language and that gave me the intuition for the right tool. What if we could build an image classifier sign language intepreter? What if we could build one end to end translation model for sign language just using photos of people signing? This blog investigates that.
+I know this learning curve isn't a solve everyone who wants to communicate better with deaf friends, family , workmates and acquaintances.We could use the advances ai technology has given us to build a tool to make this easier. Late last year Hudson , the brilliant dev he is, published an app to teach hearing guys sign language and that gave me the intuition for the right tool. What if we could build an image classifier sign language interpreter? What if we could build one end to end translation model for sign language just using photos of people signing? This blog investigates that.
 
-## Image Classifier for the Kenyan sign Language Intepreter
+## Image Classifier for the Kenyan sign Language Interpreter
 The idea is to build a single an image classifier that recognises sign language not only by looking at photos of fingers,but through a real life feed webcam or phone camera.
 Just like a human eye would. Here is a step by step  by step guide , explaining my process through the problem :
 
@@ -44,7 +44,7 @@ My background as a mobile developer has me instinctively trying to build mobile 
 
 The predefined scripts do way more than just train the model.They have code to automatically download computational graphs of the pretrained weights.
 Write tensorboard summary logs for evaluating and debugging the model, outputs the trained model as a frozen computational graph.
-Lastly they also preprocess my trainning data,  vectorising the images and storing the vector values in a text file in a similar directory structure as the training data.This is saves a lot of time when retraining the model with tweaked hyperparameters.
+Lastly they also preprocess my training data,  vectorising the images and storing the vector values in a text file in a similar directory structure as the training data.This is saves a lot of time when retraining the model with tweaked hyperparameters.
 
 
 [logo]:/home/iamukasa/PythonProjects/KSL/img/bottleneckmobilenets.png
@@ -77,7 +77,7 @@ Once everything is set , and the bottleneck code has run as illustrated above, y
 
 [logo]:/home/iamukasa/PythonProjects/KSL/img/bottleneckmobilenets.png
 
-### EVALUATING AND DEBUGGING THE MODEL
+### STEP FOUR : EVALUATING THE MODEL
 The predefined scripts are so well written you can simply visualise accuracy and loss over training iterations with one simple command
 ``` bash
 tensorboard --logdir /tmp/retrain_logs
@@ -101,3 +101,64 @@ To build even better intuition you can visualise the computational graph of the 
 
 ###### Mobilenets
 [logo]:/home/iamukasa/PythonProjects/KSL/img/mobilenets.png
+ 
+### STEP FIVE : DEBUGGING THE MODEL
+ 1500 iterations later the Inception model delivers a final accuracy summary of 99.6 %. A very high accuracy I suspect the model did overfit.
+ This is when the ai model learns too well from your training data it cant generalise to real world data. For today ill leave that specific mode as is and improve as I more diverse data from a live demo.
+ What entrepreneurs call MVPs, continuously improving with better real life data.
+Inception final summary :
+
+[logo]:/home/iamukasa/PythonProjects/KSL/img/inceptionsummary.png
+
+The mobilenets implementation however presented a different challenge.
+The same hyperparameters as the inception model delivered a final accuracy summary of 100%.
+[logo]:/home/iamukasa/PythonProjects/KSL/img/mobilenets1500.png
+
+The model clearly overfits, and it did overfits way too early, at iteration 220.
+
+[logo]:/home/iamukasa/PythonProjects/KSL/img/mobilenetsoverfitsearly.png
+
+In this case most AI researchers would improve the quality data,introduce more variation.Introduce a drop out layer that deleted half of the synapses each time the model overfit.
+At that point both options were not viable for me, so I did something hack ish I wouldnt encourage you to do.I retrained the model with less iterations. 
+Rather than letting my training iterations to get to where it gets 100% accuracy summaries.
+Final summary after the hack :
+
+[logo]:/home/iamukasa/PythonProjects/KSL/img/mobilenets200.png
+
+
+###STEP SIX : Deploying to the real world
+I have scripts to label data on the terminal but that hardly counts as a deployment so here I explore the different ways I deployed the trained model to be used on the world.
+Started with a usable use case on my local environment before deploying online.Using the classifier to translate a feed live from my webcam.
+Rewrote those python scripts as modular methods that simply took a file path to a photo and return a prediction and a confidence score on the prediction.
+ 
+Next up was to programaticaly stream a live photo from my front camera and save each frame as an image, so I can run it in the model for a prediction.Then display the prediction and  the confidence score on the screen. 
+Here is a video demo of how that turned out.
+
+
+Deploying that live feed so all of you can test it out comes with a few tweaks.I need to deploy the classifier as a microservice on kubernetes ,then use your webcam feed to feed images though.
+This video tutorial by Siraj naval will come in handy to teach that.
+Fair warning,I save the frames to Firebase storage to improve my dataset and eventually make the model better.If you are completely fine with that you can check out the demo here.
+
+That's not the end of it though. We can convert  the graph files we got to tensorflow lite files and deploy that on an android app.To do that run the following command
+```bash
+toco \
+  --input_file= [path to .pb file] \
+  --output_file=output/output_graph.tflite \
+  --input_format=TENSORFLOW_GRAPHDEF \
+  --output_format=TFLITE \
+  --input_shape=1,224,224,3 \
+  --input_array=input \
+  --output_array=final_result \
+  --inference_type=FLOAT \
+  --input_data_type=FLOAT\
+  --allow_custom_ops
+
+```
+
+Deploying to an android app has two avenues, first  option is to add the tflite app to the source code on the app like this tutorial,
+or use Firebase  ML Kit like in this tutorial.
+You can test out my Firebase ML Kit implementation here.
+
+##NEXT STEPS
+This project only scratches the surface on what can be achieved. I see this being expanded to gifs of kenyan sign language words,and leveraging the gains made on video captioning applications.
+Video in simplistic terms a series of photos, and we can combine a layer of frozen convolutional networks and an lstm layer to interpret sign language words from gifs. Inspiration for this is from this Tensorflow dev summit demo by Fchollet.
